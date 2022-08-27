@@ -13,39 +13,67 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-
-        int numberOfCorrectAnswers = 0;
-        int numberOfWrongAnswers = 0;
-        String[][] questions = {
-                {"В файл с каким расширением компилируется java файл?\n"},
-                {"С помощью какой команды git можно отправить изменения в репозиторий?\n"},
-                {"Какой применяется цикл, когда неизвестно количество итераций?\n"}
-        };
-        String[][] answers = {
-                {"1) .cs", "2) .java", "3) .class", "4) .exe"},
-                {"1) commit", "2) push", "3) pull", "4) copy"},
-                {"1) while", "2) for", "3) loop"}
-        };
-        String[] correctAnswers = {"3", "3", "1"};
+        var questions = getFillingQuestionsAndAnswer();
 
         System.out.println("Для ответа на вопрос введите 1 из предложенных цифр.");
+        var countOfCorrectAndWrongAnswers = askQuestionsAndGetCountTheNumberOfAnswers(questions);
 
-        for (int i = 0; i < 3; i++) {
-            System.out.print(questions[i][0]);
-            for (int j = 0; j < answers[i].length; j++) {
-                System.out.println(answers[i][j]);
-            }
+        System.out.println("Результат: правильно - " + countOfCorrectAndWrongAnswers.getCountOfCorrectAnswers() +
+                ", неправильно - " + countOfCorrectAndWrongAnswers.getCountOfWrongAnswers());
+    }
 
-            Scanner scanner = new Scanner(System.in);
-            String answerOfUser = scanner.nextLine();
-            if (answerOfUser.equals(correctAnswers[i])) {
-                numberOfCorrectAnswers++;
+    public static ResultOfAnswerToQuestion askQuestionsAndGetCountTheNumberOfAnswers(Question[] questions) {
+        var scanner = new Scanner(System.in);
+        ResultOfAnswerToQuestion result = new ResultOfAnswerToQuestion();
+
+        for (Question question : questions) {
+            var stringQuestion = question.getQuestion();
+            System.out.println(stringQuestion);
+
+            var possibleAnswers = question.getAnswersAndTheirNumberInString();
+            System.out.println(possibleAnswers);
+
+            var userAnswer = scanner.nextLine();
+
+            if (userAnswer.equals(String.valueOf(question.getTryAnswer().getAnswerNumberInQuestion()))) {
+                result.addCorrectAnswer();
                 System.out.println("Правильно\n");
             } else {
-                numberOfWrongAnswers++;
+                result.addWrongAnswer();
                 System.out.println("Неправильно\n");
             }
         }
-        System.out.println("Результат: правильно - " + numberOfCorrectAnswers + ", неправильно - " + numberOfWrongAnswers);
+        return result;
+    }
+
+    public static Question[] getFillingQuestionsAndAnswer() {
+        Question questionNumberOne = new Question("В файл с каким расширением компилируется java файл?");
+        Question questionNumberTwo = new Question("С помощью какой команды git можно отправить изменения в репозиторий?");
+        Question questionNumberThree = new Question("Какой применяется цикл, когда неизвестно количество итераций?");
+
+        Answer answerOneForQuestionOne = new Answer(".cs", 1);
+        Answer answerTwoForQuestionOne = new Answer(".java", 2);
+        Answer answerThreeForQuestionOne = new Answer(".class", 3);
+        Answer answerFourForQuestionOne = new Answer(".exe", 4);
+
+        questionNumberOne.setAnswers(new Answer[]{answerOneForQuestionOne, answerTwoForQuestionOne, answerThreeForQuestionOne, answerFourForQuestionOne});
+        questionNumberOne.setTryAnswer(answerThreeForQuestionOne);
+
+        Answer answerOneForQuestionTwo = new Answer("commit", 1);
+        Answer answerTwoForQuestionTwo = new Answer("push", 2);
+        Answer answerThreeForQuestionTwo = new Answer("pull", 3);
+        Answer answerFourForQuestionTwo = new Answer("copy", 4);
+
+        questionNumberTwo.setAnswers(new Answer[]{answerOneForQuestionTwo, answerTwoForQuestionTwo, answerThreeForQuestionTwo, answerFourForQuestionTwo});
+        questionNumberTwo.setTryAnswer(answerThreeForQuestionTwo);
+
+        Answer answerOneForQuestionThree = new Answer("while", 1);
+        Answer answerTwoForQuestionThree = new Answer("for", 2);
+        Answer answerThreeForQuestionThree = new Answer("loop", 3);
+
+        questionNumberThree.setAnswers(new Answer[]{answerOneForQuestionThree, answerTwoForQuestionThree, answerThreeForQuestionThree});
+        questionNumberThree.setTryAnswer(answerOneForQuestionThree);
+
+        return new Question[]{questionNumberOne, questionNumberTwo, questionNumberThree};
     }
 }
